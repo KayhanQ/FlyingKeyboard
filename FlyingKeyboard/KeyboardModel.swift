@@ -13,18 +13,25 @@ class KeyboardModel: SKNode {
     
     var layout:Dictionary<String, CGPoint> = Dictionary()
     
-    //var layout: Array<Array<Array<String>>> = []
-
     let offsets:Array<Float> = [0, 10, 12, 15]
 
-    let width:Float = 14
-    let letterSize:CGFloat = 10
+    let letterWidth:Float = 32
+    let letterSize:CGFloat = 35
     let scale:Float = 1
     
     override init() {
         super.init()
         createModel()
         drawKeyboard()
+        
+        let frame = self.calculateAccumulatedFrame()
+        let floor = SKShapeNode(rectOfSize: CGSize(width: frame.width, height: 1))
+        let body = SKPhysicsBody(rectangleOfSize: CGSize(width: frame.width, height: 1))
+        body.affectedByGravity = false
+        body.dynamic = false
+        floor.physicsBody = body
+        floor.position = CGPoint(x: self.position.x + frame.width/2, y: self.position.y + frame.height);
+        self.addChild(floor)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -32,9 +39,12 @@ class KeyboardModel: SKNode {
     }
 
     
+    func containsKey(s:String) -> Bool {
+        return layout[s] != nil
+    }
     
     func createModel() {
-        let strings = [["`q-=","~!#$%^&*()_+"], ["qwertyuiop[]"]]
+        let strings = [["zxcvbnm,./","ZXCVBNM<>?"], ["asdfghjkl;'\"","ASDFGHJKL:"], ["qwertyuiop[]\\", "QWERTYUIOP{}|"],["`1234567890-=","~!#$%^&*()_+"]]
         var rowCount = 1
         var elemCount:Float = 0
         var index = 1
@@ -44,8 +54,8 @@ class KeyboardModel: SKNode {
                 print(line)
                 
                 for s in line {
-                    let x:Float = (offsets[rowCount] + elemCount*width) * scale
-                    let y:Float = (Float(rowCount)*width) * scale
+                    let x:Float = (offsets[rowCount] + elemCount*letterWidth) * scale
+                    let y:Float = (Float(rowCount)*letterWidth) * scale
                     layout[s] = CGPoint(x: CGFloat(x), y: CGFloat(y))
                     
                     elemCount++
@@ -79,7 +89,7 @@ class KeyboardModel: SKNode {
             myLabel.text = key;
             myLabel.fontSize = letterSize;
             myLabel.position = position
-            self .addChild(myLabel)
+            self.addChild(myLabel)
         }
     }
 }
