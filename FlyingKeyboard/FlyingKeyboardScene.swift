@@ -23,9 +23,11 @@ class FlyingKeyboardScene: SKScene {
         self.physicsWorld.gravity = CGVectorMake(0, -14)
         
         let field = SKFieldNode.radialGravityField()
-        field.position.x = keyboard.position.x
-        field.position.y = keyboard.position.y + keyboard.calculateAccumulatedFrame().height + 20
-        field.strength = 1
+        field.position.x = keyboard.position.x + keyboard.calculateAccumulatedFrame().width/2
+        field.position.y = keyboard.position.y + keyboard.calculateAccumulatedFrame().height - 50
+        field.strength = -2.5
+        field.falloff = 1
+        //field.region = SKRegion(radius: 30)
         
         self.addChild(field)
     }
@@ -57,7 +59,7 @@ class FlyingKeyboardScene: SKScene {
             
             myLabel.physicsBody = physicsBody
             
-            let actionMove = SKAction.scaleTo(1, duration: 0.25)
+            let actionMove = SKAction.scaleTo(1, duration: 0.14)
             myLabel.runAction(SKAction.sequence([actionMove]))
 
             self.addChild(myLabel)
