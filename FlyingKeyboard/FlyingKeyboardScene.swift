@@ -15,9 +15,10 @@ class FlyingKeyboardScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        self.backgroundColor = SKColor(red: 0.15, green:0.15, blue:0.3, alpha: 1.0)
+        self.backgroundColor = SKColor(red: 0, green: 0, blue: 0, alpha: 0)
 
-        keyboard.position = CGPoint(x: 300, y: 80)
+        keyboard.setScale(1)
+        keyboard.position = CGPoint(x: CGRectGetMidX(self.frame) - keyboard.calculateAccumulatedFrame().width/2, y: 20)
         self.addChild(keyboard)
         
         self.physicsWorld.gravity = CGVectorMake(0, -14)
@@ -27,12 +28,9 @@ class FlyingKeyboardScene: SKScene {
         field.position.y = keyboard.position.y + keyboard.calculateAccumulatedFrame().height - 50
         field.strength = -2.5
         field.falloff = 1
-        //field.region = SKRegion(radius: 30)
         
         self.addChild(field)
     }
-    
-    
     
     override func keyDown(theEvent: NSEvent) {
 
@@ -42,27 +40,27 @@ class FlyingKeyboardScene: SKScene {
         
         if keyboard.containsKey(keyPressed!) {
             /* Setup your scene here */
-            let myLabel = SKLabelNode(fontNamed:"Helvetica")
-            myLabel.text = keyPressed;
-            myLabel.fontSize = 42;
+            let label = SKLabelNode(fontNamed:"Helvetica")
+            label.text = keyPressed;
+            label.fontSize = 42;
             let x = keyboard.getGlobalPosition(keyPressed!).x + randomBetween(-15, secondNum: 15)
             let y = keyboard.position.y + keyboard.calculateAccumulatedFrame().height + 4
-            myLabel.position = CGPoint(x: x, y: y)
-            myLabel.zRotation = randomBetween(-1, secondNum: 1)
+            label.position = CGPoint(x: x, y: y)
+            label.zRotation = randomBetween(-1, secondNum: 1)
             
-            myLabel.setScale(0.7)
+            label.setScale(0.7)
             
-            let physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: myLabel.frame.width, height: myLabel.frame.height))
+            let physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: label.frame.width, height: label.frame.height))
             physicsBody.velocity = CGVector(dx: 0, dy: randomBetween(1200, secondNum: 1400))
             physicsBody.angularVelocity = randomBetween(-2, secondNum: 2)
             physicsBody.restitution = 0.5
             
-            myLabel.physicsBody = physicsBody
+            label.physicsBody = physicsBody
             
             let actionMove = SKAction.scaleTo(1, duration: 0.14)
-            myLabel.runAction(SKAction.sequence([actionMove]))
+            label.runAction(SKAction.sequence([actionMove]))
 
-            self.addChild(myLabel)
+            self.addChild(label)
         }
     }
     

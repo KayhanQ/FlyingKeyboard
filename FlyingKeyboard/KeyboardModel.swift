@@ -13,11 +13,14 @@ class KeyboardModel: SKNode {
     
     var layout:Dictionary<String, CGPoint> = Dictionary()
     
-    let offsets:Array<Float> = [0, 10, 12, 15]
-
-    let letterWidth:Float = 32
-    let letterSize:CGFloat = 35
-    let scale:Float = 1
+    
+    //offsets = 2.75, 3.2, 4.15
+    let offsets:Array<Float> = [4.6, 3.7, 2.8, 0].map{$0 * 20}
+    let letterWidth:Float = 1.5*20
+    let letterGap:Float = 0.3666666*20
+    let topOffset:CGFloat = 30
+    
+    var lightsUp:Bool = true
     
     override init() {
         super.init()
@@ -30,7 +33,7 @@ class KeyboardModel: SKNode {
         body.affectedByGravity = false
         body.dynamic = false
         floor.physicsBody = body
-        floor.position = CGPoint(x: self.position.x + frame.width/2, y: self.position.y + frame.height);
+        floor.position = CGPoint(x: self.position.x + frame.width/2, y: self.position.y + frame.height + topOffset);
         self.addChild(floor)
     }
 
@@ -43,29 +46,35 @@ class KeyboardModel: SKNode {
         return layout[s] != nil
     }
     
+    func keyPressed(s:String) {
+        if lightsUp {
+            
+        }
+    }
+    
     func createModel() {
-        let strings = [["zxcvbnm,./","ZXCVBNM<>?"], ["asdfghjkl;'\"","ASDFGHJKL:"], ["qwertyuiop[]\\", "QWERTYUIOP{}|"],["`1234567890-=","~!#$%^&*()_+"]]
-        var rowCount = 1
+        let strings = [["zxcvbnm,./","ZXCVBNM<>?"], ["asdfghjkl;'","ASDFGHJKL:\""], ["qwertyuiop[]\\", "QWERTYUIOP{}|"],["`1234567890-=","~!@#$%^&*()_+"]]
+        var rowCount = 0
         var elemCount:Float = 0
-        var index = 1
+        var index = 0
+        
         for row in strings {
             for lineArr in row {
                 let line = lineArr.characters.map { String($0) }
                 print(line)
                 
                 for s in line {
-                    let x:Float = (offsets[rowCount] + elemCount*letterWidth) * scale
-                    let y:Float = (Float(rowCount)*letterWidth) * scale
+                    let x:Float = (offsets[rowCount] + elemCount*(letterWidth+letterGap))
+                    let y:Float = (Float(rowCount)*(letterWidth+letterGap))
                     layout[s] = CGPoint(x: CGFloat(x), y: CGFloat(y))
                     
                     elemCount++
                 }
                 elemCount = 0
-            }
-
-            index++
-            if index % 2 == 0 {
-                rowCount++
+                if index % 2 == 1 {
+                    rowCount++
+                }
+                index++
             }
         }
         print(layout)
@@ -85,11 +94,11 @@ class KeyboardModel: SKNode {
         self.removeAllChildren()
         
         for (key, position) in layout {
-            let myLabel = SKLabelNode(fontNamed:"Helvetica")
-            myLabel.text = key;
-            myLabel.fontSize = letterSize;
-            myLabel.position = position
-            self.addChild(myLabel)
+            let label = SKLabelNode(fontNamed:"Helvetica")
+            label.text = key;
+            label.fontSize = CGFloat(letterWidth);
+            label.position = position
+            self.addChild(label)
         }
     }
 }
