@@ -33,17 +33,15 @@ class FlyingKeyboardScene: SKScene {
     }
     
     override func keyDown(theEvent: NSEvent) {
-
-        let keyPressed = theEvent.charactersIgnoringModifiers
+        let key = theEvent.charactersIgnoringModifiers
+        print("\(key)")
         
-        print("\(keyPressed)")
-        
-        if keyboard.containsKey(keyPressed!) {
-            /* Setup your scene here */
+        if keyboard.containsKey(key!) {            
+            keyboard.keyPressed(key!)
             let label = SKLabelNode(fontNamed:"Helvetica")
-            label.text = keyPressed;
+            label.text = key;
             label.fontSize = 42;
-            let x = keyboard.getGlobalPosition(keyPressed!).x + randomBetween(-15, secondNum: 15)
+            let x = keyboard.getGlobalPosition(key!).x + randomBetween(-15, secondNum: 15)
             let y = keyboard.position.y + keyboard.calculateAccumulatedFrame().height + 4
             label.position = CGPoint(x: x, y: y)
             label.zRotation = randomBetween(-1, secondNum: 1)
@@ -61,6 +59,13 @@ class FlyingKeyboardScene: SKScene {
             label.runAction(SKAction.sequence([actionMove]))
 
             self.addChild(label)
+        }
+    }
+    
+    override func keyUp(theEvent: NSEvent) {
+        let key = theEvent.charactersIgnoringModifiers
+        if keyboard.containsKey(key!) {
+            keyboard.keyDepressed(key!)
         }
     }
     

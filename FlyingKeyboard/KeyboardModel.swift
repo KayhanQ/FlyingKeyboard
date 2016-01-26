@@ -20,10 +20,17 @@ class KeyboardModel: SKNode {
     let letterGap:Float = 0.3666666*20
     let topOffset:CGFloat = 30
     
+    var keysNode:SKNode = SKNode()
+    var highlightsNode:SKNode = SKNode()
+
     var lightsUp:Bool = true
     
     override init() {
         super.init()
+        
+        self.addChild(keysNode)
+        self.addChild(highlightsNode)
+        
         createModel()
         drawKeyboard()
         
@@ -39,17 +46,6 @@ class KeyboardModel: SKNode {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    
-    func containsKey(s:String) -> Bool {
-        return layout[s] != nil
-    }
-    
-    func keyPressed(s:String) {
-        if lightsUp {
-            
-        }
     }
     
     func createModel() {
@@ -80,16 +76,6 @@ class KeyboardModel: SKNode {
         print(layout)
     }
     
-    func getPosition(s:String) -> CGPoint {
-        return layout[s]!
-    }
-    
-    func getGlobalPosition(s:String) -> CGPoint {
-        let position = CGPoint(x: getPosition(s).x + self.position.x, y: getPosition(s).y + self.position.y)
-        return position
-    }
-    
-    
     func drawKeyboard() {
         self.removeAllChildren()
         
@@ -100,6 +86,41 @@ class KeyboardModel: SKNode {
             label.position = position
             self.addChild(label)
         }
+    }
+    
+    func keyPressed(s:String) {
+        if lightsUp {
+            let point:CGPoint = layout[s]!
+            
+            let circle = SKShapeNode(circleOfRadius: CGFloat(letterWidth)/2)
+            circle.position = CGPoint(x: point.x, y: point.y+circle.frame.height/2)
+            circle.fillColor = NSColor.whiteColor()
+            circle.name = "highlight"
+            self.addChild(circle)
+        }
+    }
+    
+    func keyDepressed(s:String) {
+        if lightsUp {
+            for node in self.children {
+                if node.name == "highlight" {
+                    node.removeFromParent()
+                }
+            }
+        }
+    }
+    
+    func containsKey(s:String) -> Bool {
+        return layout[s] != nil
+    }
+    
+    func getPosition(s:String) -> CGPoint {
+        return layout[s]!
+    }
+    
+    func getGlobalPosition(s:String) -> CGPoint {
+        let position = CGPoint(x: getPosition(s).x + self.position.x, y: getPosition(s).y + self.position.y)
+        return position
     }
 }
 
