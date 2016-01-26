@@ -60,6 +60,10 @@ class FlyingKeyboardScene: SKScene {
 
             self.addChild(label)
         }
+        
+        if key == "\r" {
+            keyboard.visible = !keyboard.visible
+        }
     }
     
     override func keyUp(theEvent: NSEvent) {

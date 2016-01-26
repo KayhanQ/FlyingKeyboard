@@ -18,7 +18,7 @@ class KeyboardModel: SKNode {
     let offsets:Array<Float> = [4.6, 3.7, 2.8, 0].map{$0 * 20}
     let letterWidth:Float = 1.5*20
     let letterGap:Float = 0.3666666*20
-    let topOffset:CGFloat = 30
+    let topOffset:CGFloat = 50
     
     var keysNode:SKNode = SKNode()
     var highlightsNode:SKNode = SKNode()
@@ -26,6 +26,7 @@ class KeyboardModel: SKNode {
     var lightsUp:Bool = true
     
     override init() {
+        //visible = true
         super.init()
         
         self.addChild(keysNode)
@@ -39,9 +40,15 @@ class KeyboardModel: SKNode {
         let body = SKPhysicsBody(rectangleOfSize: CGSize(width: frame.width, height: 1))
         body.affectedByGravity = false
         body.dynamic = false
+        floor.alpha = 0
         floor.physicsBody = body
         floor.position = CGPoint(x: self.position.x + frame.width/2, y: self.position.y + frame.height + topOffset);
         self.addChild(floor)
+        
+        
+        let border = SKShapeNode(rect: self.calculateAccumulatedFrame())
+        border.alpha = 0
+        self.addChild(border)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -77,14 +84,34 @@ class KeyboardModel: SKNode {
     }
     
     func drawKeyboard() {
-        self.removeAllChildren()
+        removeNodesWithName("key")
         
         for (key, position) in layout {
             let label = SKLabelNode(fontNamed:"Helvetica")
-            label.text = key;
+            label.text = key
+            label.name = "key"
             label.fontSize = CGFloat(letterWidth);
             label.position = position
             self.addChild(label)
+        }
+    }
+    
+    func removeNodesWithName(name: String) {
+        for node in self.children {
+            if node.name == name {
+                node.removeFromParent()
+            }
+        }
+    }
+    
+    var visible: Bool = true {
+        didSet{
+            if visible {
+                drawKeyboard()
+            }
+            else {
+                removeNodesWithName("key")
+            }
         }
     }
     
@@ -102,11 +129,7 @@ class KeyboardModel: SKNode {
     
     func keyDepressed(s:String) {
         if lightsUp {
-            for node in self.children {
-                if node.name == "highlight" {
-                    node.removeFromParent()
-                }
-            }
+            removeNodesWithName("highlight")
         }
     }
     
